@@ -1,0 +1,11 @@
+.kiro/
+.vscode/
+.cursor/
+.idea/
+.zencoder/
+.gemini/
+.history/
+
+node_modules/
+dist/
+user_data/
