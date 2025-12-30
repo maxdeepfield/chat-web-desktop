@@ -5,9 +5,9 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com)
+![Made with Love](https://img.shields.io/badge/Made%20with-❤️-white)
 
-Desktop shell for running multiple web-based messengers or tools side-by-side, each with its own profile (URL, title, icon, and optional User-Agent). Built with Electron.
+Desktop shell for running multiple web-based messengers or tools side-by-side. Each profile gets its own **separate tray icon** - finally know which messenger has new messages at a glance! Built with Electron.
 
 ## Features
 
