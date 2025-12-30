@@ -1,5 +1,12 @@
 # Chat Web Desktop
 
+[![Electron](https://img.shields.io/badge/Electron-28-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com)
+
 Desktop shell for running multiple web-based messengers or tools side-by-side, each with its own profile (URL, title, icon, and optional User-Agent). Built with Electron.
 
 ## Features
@@ -7,9 +14,10 @@ Desktop shell for running multiple web-based messengers or tools side-by-side, e
 - **Multiple profiles/windows** at once (e.g., chat, mail, support)
 - **Tray controls** to show/hide/reload individual profiles or all at once
 - **Per-profile customization**: window title, icon, and optional custom User-Agent
-- **Unread detection** with visual tray notifications
-- **Portable configuration** stored in `user_data/config.json`
-- **Multi-profile support** with independent settings
+- **Unread detection** with visual tray notifications (blinking icons)
+- **Minimize to tray** - windows hide to tray instead of closing
+- **Remember window position** - each profile remembers its window size and position
+- **Portable configuration** stored in JSON format
 
 ## Quick Start
 
@@ -43,7 +51,7 @@ Each profile supports:
 - **Service URL**: The web application URL to load
 - **User-Agent**: Optional custom User-Agent string
 - **Window Title**: Custom window title (defaults to profile name)
-- **Icon**: Custom icon path (PNG/ICO/ICNS)
+- **Icon**: Custom icon path (PNG/ICO)
 - **Notification Icon**: Icon for unread notifications
 
 ### Tray Features
@@ -68,12 +76,6 @@ npm install
 
 # Run in development mode
 npm start
-
-# Run unit tests
-npm test
-
-# Run end-to-end tests
-npm run test:e2e
 ```
 
 ### Project Structure
@@ -83,24 +85,16 @@ chat-web-desktop/
 ├── index.js              # Main Electron process
 ├── preload.js            # Renderer preload script
 ├── package.json          # Project configuration
-├── README.md             # This file
-├── ARCHITECTURE.md       # System architecture documentation
-├── AI_DEV_GUIDE.md       # AI developer guide
-├── NOTICE.md             # Legal notices
-├── icons/                # Application icons
-├── tests/                # Test files
+├── assets/               # Application icons
+│   ├── chat_idle.ico     # App/installer icon
+│   ├── chat_idle.png     # Tray icon (normal)
+│   └── chat_new.png      # Tray icon (new messages)
 └── user_data/            # Runtime user data
 ```
 
-## Documentation
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Comprehensive system architecture specification
-- **[AI_DEV_GUIDE.md](AI_DEV_GUIDE.md)** - Development guide specifically for AI agents
-- **[NOTICE.md](NOTICE.md)** - Legal notices and disclaimers
-
 ## Configuration
 
-Configuration is stored in `user_data/config.json` next to the executable.
+Configuration is stored in `user_data/config.json`.
 
 **Override location**: Set `CHAT_WEB_USER_DATA` environment variable to customize the data directory.
 
@@ -120,58 +114,24 @@ Configuration is stored in `user_data/config.json` next to the executable.
 }
 ```
 
-## Testing
-
-### Unit Tests
-
-Test configuration helpers and pure functions:
-
-```bash
-npm test
-```
-
-### End-to-End Tests
-
-Test full application flow with Playwright:
-
-```bash
-npm run test:e2e
-```
-
 ## Build & Distribution
 
-### Windows MSI Build
+### Build Windows Installer
 
 ```bash
-npm run dist:msi
+npm run dist
 ```
 
-Output: `dist/Chat Web Desktop Setup x.x.x.msi`
-
-### Build Configuration
-
-Build settings are defined in `package.json` under the `build` section, including:
-- Application metadata
-- Icon paths
-- File inclusion/exclusion
-- Platform-specific settings
+Output: `dist/Chat Web Desktop Setup x.x.x.exe`
 
 ## Troubleshooting
 
 ### Common Issues
 
 - **No profiles configured**: Use "Configure" from tray menu or splash screen
-- **Icons not loading**: Ensure icon files exist and are in supported formats (PNG/ICO/ICNS)
+- **Icons not loading**: Ensure icon files exist and are in supported formats (PNG/ICO)
 - **User-Agent not working**: Check that the User-Agent string is valid
-- **Tray not appearing**: Check system tray settings and antivirus software
-
-### Debug Mode
-
-Enable verbose logging:
-
-```bash
-DEBUG=electron* npm start
-```
+- **Tray not appearing**: Check system tray settings
 
 ### Reset Configuration
 
@@ -179,4 +139,4 @@ Delete `user_data/config.json` or use "Clear All" in the configuration window.
 
 ## License
 
-ISC License - See [NOTICE.md](NOTICE.md) for additional legal information.
+ISC License
