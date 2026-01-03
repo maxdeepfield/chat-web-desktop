@@ -22,16 +22,16 @@ try {
 } catch (e) {
   if (IS_TEST) {
     // Minimal stubs for unit testing config helpers without Electron runtime
-    const noop = () => {};
+    const noop = () => { };
     app = {
       isPackaged: false,
       setAppUserModelId: noop,
       setPath: noop,
       getPath: () => path.join(process.cwd(), 'user_data_test')
     };
-    BrowserWindow = class {};
+    BrowserWindow = class { };
     session = { defaultSession: { getUserAgent: () => 'test-agent' } };
-    Tray = class {};
+    Tray = class { };
     Menu = { setApplicationMenu: noop, buildFromTemplate: () => ({}) };
     nativeImage = {
       createFromPath: () => ({ isEmpty: () => true }),
@@ -102,7 +102,8 @@ function normalizeProfile(profile = {}, idx = 0) {
   const iconPath = trimString(profile.iconPath) || null;
   const iconNotifyPath = trimString(profile.iconNotifyPath) || null;
   const windowBounds = profile.windowBounds || null;
-  return { id, name, title, trayTitle, url, userAgent, iconPath, iconNotifyPath, windowBounds };
+  const minimizeToTray = profile.minimizeToTray !== undefined ? !!profile.minimizeToTray : true;
+  return { id, name, title, trayTitle, url, userAgent, iconPath, iconNotifyPath, windowBounds, minimizeToTray };
 }
 
 function normalizeConfig(cfg = {}) {
@@ -280,7 +281,7 @@ function stopTrayBlinking(profileId) {
   trayBlinkStates.delete(profileId);
   try {
     applyTrayIcon(profileId);
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function attachUnreadDetection(win, profile) {
@@ -289,7 +290,7 @@ function attachUnreadDetection(win, profile) {
   if (win.__unreadCleanup) {
     try {
       win.__unreadCleanup();
-    } catch (e) {}
+    } catch (e) { }
   }
 
   if (!profileMatchesAttentionTargets(profile)) {
@@ -306,7 +307,7 @@ function attachUnreadDetection(win, profile) {
     let currentUrl = '';
     try {
       currentUrl = typeof webContents.getURL === 'function' ? webContents.getURL() : '';
-    } catch (e) {}
+    } catch (e) { }
     const hasUnread = titleIndicatesUnread(title, profile, currentUrl);
     if (!hasUnread) clearUnreadState(profile.id);
     else setUnreadState(profile.id, true);
@@ -316,7 +317,7 @@ function attachUnreadDetection(win, profile) {
   const handleLoad = () => {
     try {
       evaluateTitle(webContents.getTitle());
-    } catch (e) {}
+    } catch (e) { }
   };
   const handleFocus = () => handleLoad();
 
@@ -325,16 +326,16 @@ function attachUnreadDetection(win, profile) {
     cleaned = true;
     try {
       webContents.removeListener('page-title-updated', handleTitleUpdated);
-    } catch (e) {}
+    } catch (e) { }
     try {
       webContents.removeListener('did-finish-load', handleLoad);
-    } catch (e) {}
+    } catch (e) { }
     try {
       win.removeListener('focus', handleFocus);
-    } catch (e) {}
+    } catch (e) { }
     try {
       win.removeListener('closed', cleanup);
-    } catch (e) {}
+    } catch (e) { }
     clearUnreadState(profile.id);
     win.__unreadCleanup = null;
   };
@@ -459,7 +460,7 @@ function getAppIconNative({ notification = false, forTray = false, profile = nul
     try {
       const size = process.platform === 'win32' ? 16 : 24;
       if (typeof img2.resize === 'function') return img2.resize({ width: size, height: size });
-    } catch (e) {}
+    } catch (e) { }
     return img2;
   } catch (e) {
     try {
@@ -478,7 +479,7 @@ function loadContentForProfile(win, profile) {
 
   try {
     win.setTitle(windowTitle);
-  } catch (e) {}
+  } catch (e) { }
 
   try {
     const winIcon = getAppIconNative({ profile, forTray: false });
@@ -582,15 +583,17 @@ function createProfileWindow(profile) {
       e.preventDefault();
       try {
         win.hide();
-      } catch (err) {}
+      } catch (err) { }
     }
   });
 
   win.on('minimize', (e) => {
-    e.preventDefault();
-    try {
-      win.hide();
-    } catch (err) {}
+    if (profile.minimizeToTray) {
+      e.preventDefault();
+      try {
+        win.hide();
+      } catch (err) { }
+    }
   });
 
   let boundsTimeout = null;
@@ -646,7 +649,7 @@ function hideProfileWindow(profileId) {
   if (win) {
     try {
       win.hide();
-    } catch (e) {}
+    } catch (e) { }
   }
 }
 
@@ -671,7 +674,7 @@ function destroyProfileWindow(profileId) {
   } catch (e) {
     try {
       win.destroy();
-    } catch (err) {}
+    } catch (err) { }
   }
   windows.delete(profileId);
   clearUnreadState(profileId);
@@ -722,19 +725,19 @@ function buildTrayMenu(profile) {
     { type: 'separator' },
     ...(others.length
       ? [
-          {
-            label: 'Other Profiles',
-            submenu: others.map((p) => ({
-              label: p.name || resolveWindowTitle(p),
-              icon: getAppIconNative({ forTray: true, profile: p }),
-              click: () => {
-                createTrayForProfile(p);
-                showProfileWindow(p.id);
-              }
-            }))
-          },
-          { type: 'separator' }
-        ]
+        {
+          label: 'Other Profiles',
+          submenu: others.map((p) => ({
+            label: p.name || resolveWindowTitle(p),
+            icon: getAppIconNative({ forTray: true, profile: p }),
+            click: () => {
+              createTrayForProfile(p);
+              showProfileWindow(p.id);
+            }
+          }))
+        },
+        { type: 'separator' }
+      ]
       : []),
     { label: 'Show All', click: () => profiles.forEach((p) => showProfileWindow(p.id)) },
     { label: 'Hide All', click: () => profiles.forEach((p) => hideProfileWindow(p.id)) },
@@ -848,7 +851,7 @@ function destroyProfileTray(profileId) {
   if (tray && typeof tray.destroy === 'function') {
     try {
       tray.destroy();
-    } catch (e) {}
+    } catch (e) { }
   }
   profileTrays.delete(profileId);
   unreadStates.delete(profileId);
@@ -1019,6 +1022,14 @@ function openConfigWindow() {
               </div>
               <small>Used while the tray blinks for new messages for this profile.</small>
             </div>
+
+            <div class="field">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input data-field="minimizeToTray" type="checkbox" \${profile.minimizeToTray !== false ? 'checked' : ''} style="width:auto;margin:0;cursor:pointer;" />
+                <span>Minimize to tray when minimized to taskbar</span>
+              </label>
+              <small>When enabled, minimizing the window will hide it from the taskbar and keep it in the tray only.</small>
+            </div>
           </div>
         \`;
 
@@ -1071,6 +1082,7 @@ function openConfigWindow() {
           let title = trimmedTitle;
           if (!title) title = name;
           else if (titleMatchesOriginal && name && name !== title) title = name;
+          const minimizeToTray = card.querySelector('[data-field="minimizeToTray"]')?.checked !== false;
           return {
             id: card.dataset.id || generateId(),
             name,
@@ -1078,7 +1090,8 @@ function openConfigWindow() {
             userAgent: get('[data-field="ua"]'),
             title,
             iconPath: get('[data-field="iconPath"]'),
-            iconNotifyPath: get('[data-field="iconNotifyPath"]')
+            iconNotifyPath: get('[data-field="iconNotifyPath"]'),
+            minimizeToTray
           };
         }).filter((p) => p.name || p.url);
 
@@ -1114,7 +1127,7 @@ function openConfigWindow() {
   // Open external links in default OS browser instead of new Electron window (config window)
   if (configWindow && configWindow.webContents && typeof configWindow.webContents.setWindowOpenHandler === 'function') {
     configWindow.webContents.setWindowOpenHandler(({ url }) => {
-      try { shell.openExternal(url); } catch (_) {}
+      try { shell.openExternal(url); } catch (_) { }
       return { action: 'deny' };
     });
   }
@@ -1178,7 +1191,7 @@ function registerIpcHandlers() {
       let currentUrl = '';
       try {
         currentUrl = event && event.sender && typeof event.sender.getURL === 'function' ? event.sender.getURL() : '';
-      } catch (e) {}
+      } catch (e) { }
       if (!profileMatchesAttentionTargets(profile, currentUrl)) return;
       setUnreadState(profileId, true);
     } catch (e) {
